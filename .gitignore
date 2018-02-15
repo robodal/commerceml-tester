@@ -1,0 +1,6 @@
+.git
+.idea
+templates/images/*
+templates/*.xml
+temp/*
+!.empty
