@@ -641,7 +641,10 @@ class CML2Uploader {
             CURLOPT_URL => $url,
             CURLOPT_POSTFIELDS => $data,
         ]);
-        $log = $result = array_map('trim', explode("\n", trim(curl_exec($this->curl))));
+        $content = curl_exec($this->curl);
+        $info = curl_getinfo($this->curl);
+        if ($info['http_code'] != 200) throw new Exception($info['url'] . ' return status ' . $info['http_code']);
+        $log = $result = array_map('trim', explode("\n", trim($content)));
         $status = strtolower($result[0]);
         if (preg_match('#^(progress|success|fail)$#', $status)) {
             echo '  [' . $status . "]\n";
