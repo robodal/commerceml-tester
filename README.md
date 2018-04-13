@@ -17,8 +17,8 @@ https://github.com/crazy-beard/commerceml-tester/archive/master.zip
 $ git clone https://github.com/crazy-beard/commerceml-tester.git
 ```
 
-2. Наполняем директорию /templates/images/ случайными картинками для товаров.
-Можно воспользоваться каким-нибудь набором файлов, например вот [этим](https://yadi.sk/d/hQxqmBZY3SRRRA) (500 картинок на 160 Мб), либо "наковырять" с соответствующих сервисов встроенной командой
+2. Наполняем директорию /templates/images/ картинками-заглушками для товаров.
+Нижеприведенная команда скачает и распакует вот [этот](https://yadi.sk/d/hQxqmBZY3SRRRA) набор картинок (500 шт., 160 Мб).
 ```php
 $ php cmltester.php images
 ```

@@ -510,32 +510,40 @@ class CML2Generator {
             'memory' => round(memory_get_peak_usage() / 1024 / 1024, 2) . ' Mb',
         ];
     }
-    
-    
+
+
     /**
-     * Парсинг рандомных картинок
-     * @param int $count
+     * Получить пакет картинок-заглушек
+     * @param string $packURL
      * @throws Exception
      */
-    public function generateImages (int $count = 50) {
-        $services = ['loremflickr.com', 'placeimg.com', 'lorempixel.com'];
-        $sizes = ['640/480', '800/600', '720/560', '1024/168', '960/720'];
-        $themes = [
-            'cats', 'dogs', 'food', 'sport', 'animals', 'tech', 'people', 'abstract', 'business', 'city', 'fashion',
-            'nature', 'russia', 'rio', 'products', 'sky', 'mobile', 'forest', 'rain', 'office', 'house', 'building',
-        ];
-        while ($count) {
-            $url = 'http://' . $services[array_rand($services)] . '/';
-            $url .= $sizes[array_rand($sizes)] . '/' . $themes[array_rand($themes)];
-            $data = (string)@file_get_contents($url);
-            if (strlen($data) < 8192) continue;
-            sleep(2);
-            $filename = md5($data . '.jpg';
-            file_put_contents($this->config['images-path'] . $filename, $data);
-            $size = round(strlen($data) / 1024 / 1024, 2);
-            echo "[{$count}] {$filename} {$size} Mb\n";
-            $count--;
+    public function downloadImages (string $packURL) {
+        $diskUrl = 'https://cloud-api.yandex.net/v1/disk/public/resources/download?public_key=' . urlencode($packURL);
+        $apiData = @json_decode(@file_get_contents($diskUrl), true);
+        if (!is_array($apiData) || !isset($apiData['href'])) throw new Exception('Ya.disk download error');
+        echo 'Download images pack... ';
+        $zipFile = $this->config['images-path'] . md5($apiData['href']) . '.zip';
+        copy($apiData['href'], $zipFile);
+        echo "[OK]\n";
+        echo "UNZIP images:\n";
+        $num = 0;
+        $zip = zip_open($zipFile);
+        if (!$zip) throw new Exception('Error in ZIP-file');
+        while ($entry = zip_read($zip)) {
+            $entrySize = zip_entry_filesize($entry);
+            $entryName = zip_entry_name($entry);
+            if (!$entrySize) continue;
+            if (zip_entry_open($zip, $entry, 'r')) {
+                file_put_contents($this->config['images-path'] . $entryName, zip_entry_read($entry, $entrySize));
+                zip_entry_close($entry);
+                echo (++$num) . '. ' . $entryName . '[' . round($entrySize / 1024, 2) . " Kb]\n";
+            }
+            else throw new Exception('Error unpack "' . $entryName . '" from ZIP-file');
         }
+        zip_close($zip);
+        echo 'Delete zip-file... ';
+        echo unlink($zipFile) ? '[OK]' : '[Error]';
+        echo "\n";
     }
     
 }
@@ -874,9 +882,9 @@ class CML2Emulator {
      */
     private function actionImages (array $params = []) {
         $params = array_merge($this->serv, [
-            'count' => 50,
+            'url' => 'https://yadi.sk/d/hQxqmBZY3SRRRA',
         ], $params);
-        CML2Generator::getInstance($params)->generateImages($params['count']);
+        CML2Generator::getInstance($params)->downloadImages($params['url']);
     }
     
 }
