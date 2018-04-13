@@ -337,7 +337,9 @@ class CML2Generator {
      */
     private function getRndImages () {
         $images = [];
-        for ($i = rand(0, 3); $i--; ) $images['Картинка:enum' . $i] = $this->images[array_rand($this->images)];
+        if (count($this->images)) {
+            for ($i = rand(0, 3); $i--;) $images['Картинка:enum' . $i] = $this->images[array_rand($this->images)];
+        }
         return $images;
     }
     
