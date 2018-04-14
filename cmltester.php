@@ -627,7 +627,7 @@ class CML2Uploader {
                 CURLOPT_HEADER => false,
                 CURLOPT_RETURNTRANSFER => true,
                 CURLOPT_TIMEOUT => 180,
-                CURLOPT_USERAGENT => 'CommerceML2 emulator (TODO: github)',
+                CURLOPT_USERAGENT => 'CommerceML2 emulator (https://github.com/crazy-beard/commerceml-tester)',
                 CURLOPT_COOKIEJAR => $cookiejar,
                 CURLOPT_COOKIEFILE => $cookiejar,
                 CURLOPT_POST => true,
