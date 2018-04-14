@@ -677,7 +677,7 @@ class CML2Uploader {
             $dir = opendir('temp/');
             while ($fname = readdir($dir)) if (preg_match('#^\d+\.jpg$#i', $fname)) unlink('temp/' . $fname);
             closedir($dir);
-            preg_match_all('%>(\d+\.jpg)<%i', file_get_contents('temp/import.xml'), $m);
+            preg_match_all('%>([a-z0-9.-]+\.(?:jpg|jpeg|png))<%i', file_get_contents('temp/import.xml'), $m);
             $images = array_unique($m[1]);
             foreach ($images as $image) copy('templates/images/' . $image, 'temp/' . $image);
         }
